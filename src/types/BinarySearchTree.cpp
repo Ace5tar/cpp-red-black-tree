@@ -128,6 +128,62 @@ void BinarySearchTree::deallocateRecursive(Node* node) {
   delete node;
 }
 
+Node* BinarySearchTree::getSibling(Node* node) {
+  if (!node) { return nullptr; }
+  if (!node->parent) { return nullptr; }
+
+  if (&(node->parent->left) == node ) { return node->parent->right; }
+  if (&(node->parent->right) == node ) { return node->parent->left; }
+}
+
+Node* BinarySearchTree::rightRotation(Node* node) {
+  Node** parentsPtr = nullptr;
+  if (node == head) { parentsPtr = &head; }
+  if (node->parent && node->parent->left == node) { parentsPtr = &(node->parent->left); }
+  if (node->parent && node->parent->right == node) { parentsPtr = &(node->parent->right); }
+
+  Node* child = node->left;
+
+  node->left = child->right;
+  child->parent = node->parent;
+  node->parent = child;
+  *parentsPtr = child;
+  child->right->parent = node;
+  child->right = node;
+
+  return child;
+}
+
+Node* BinarySearchTree::leftRotation(Node* node) {
+  Node** parentsPtr = nullptr;
+  if (node == head) { parentsPtr = &head; }
+  if (node->parent && node->parent->left == node) { parentsPtr = &(node->parent->left); }
+  if (node->parent && node->parent->right == node) { parentsPtr = &(node->parent->right); }
+
+  Node* child = node->right;
+
+  node->right = child->left;
+  child->parent = node->parent;
+  node->parent = child;
+  *parentsPtr = child;
+  child->left->parent = node;
+  child->left = node;
+
+  return child;
+}
+
+int BinarySearchTree::organizeTreeInsertion(Node* node) {
+  return 0;
+}
+
+int BinarySearchTree::swapColor(Node* node) {
+  if (!node) { return 1; }
+  if (!node->color) { return 1; }
+
+  if (node->color == BLACK) { node->color = RED; }
+  else { node->color = BLACK; }
+}
+
 std::ostream& operator<<(std::ostream& os, BinarySearchTree& tree) {
   if (!tree.head) { os << "Tree is empty." << std::endl;}
 
