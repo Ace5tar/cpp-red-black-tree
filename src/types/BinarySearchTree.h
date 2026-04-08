@@ -39,6 +39,21 @@ class BinarySearchTree {
     // Recursive algoroithm for deallocating this object
     void deallocateRecursive(Node* node);
 
+    // Helper function for getting the sibling of a node
+    Node* getSibling(Node* node);
+
+    // Perform a right rotation on the supplied node
+    Node* rightRotation(Node* node);
+
+    // Perform a left rotation on the supplied node
+    Node* leftRotation(Node* node);
+
+    // Organizes the tree in the insertion case starting from the supplied node
+    int organizeTreeInsertion(Node* node);
+
+    // Swap the color of the supplied node (RED->BLACK, BLACK->RED)
+    int swapColor(Node* node);
+
     // Overload << operator for printing
     friend std::ostream& operator<<(std::ostream& os, BinarySearchTree& tree);
 
