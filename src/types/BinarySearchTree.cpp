@@ -54,12 +54,14 @@ int BinarySearchTree::removeNode(Node* node) {
 
   if (!node->left) {
     *parentsPtr = node->right;
+    node->right->parent = node->parent;
     delete node;
     return 0;
   }
 
   if (!node->right) {
     *parentsPtr = node->left;
+    node->left->parent = node->parent;
     delete node;
     return 0;
   }
