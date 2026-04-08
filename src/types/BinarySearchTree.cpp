@@ -203,10 +203,10 @@ std::ostream& BinarySearchTree::reprRecursive(std::ostream& os, Node* node, int 
 
   const char* nodeCol;
 
-  if (node->color == RED) { nodeCol = " (R)"; }
-  else { nodeCol = " (B)"; }
+  if (node->color == RED) { nodeCol = "\033[41m"; }
+  else { nodeCol = "\033[40m"; }
 
-  os << node->data << nodeCol << std::endl;
+  os << nodeCol << node->data << "\033[0m" << std::endl;
 
   reprRecursive(os, node->left, depth + 1);
 
