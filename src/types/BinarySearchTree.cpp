@@ -200,7 +200,13 @@ std::ostream& BinarySearchTree::reprRecursive(std::ostream& os, Node* node, int 
   reprRecursive(os, node->right, depth + 1);
 
   for (int i = 0; i < depth; ++i) { os << "  "; }
-  os << node->data << std::endl;
+
+  const char* nodeCol;
+
+  if (node->color == RED) { nodeCol = " (R)"; }
+  else { nodeCol = " (B)"; }
+
+  os << node->data << nodeCol << std::endl;
 
   reprRecursive(os, node->left, depth + 1);
 
