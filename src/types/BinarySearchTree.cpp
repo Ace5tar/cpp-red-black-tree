@@ -94,6 +94,7 @@ int BinarySearchTree::insertRecursive(int data, Node* node) {
   if (!*nextNode) {
     *nextNode = new Node(data, RED);
     (*nextNode)->parent = node;
+    organizeTreeInsertion(*nextNode);
   } else {
     insertRecursive(data, *nextNode);
   }
@@ -140,7 +141,7 @@ Node* BinarySearchTree::rightRotation(Node* node) {
   Node** parentsPtr = nullptr;
   if (node == head) { parentsPtr = &head; }
   if (node->parent && node->parent->left == node) { parentsPtr = &(node->parent->left); }
-  { parentsPtr = &(node->parent->right); }
+  if (node->parent && node->parent->right == node) { parentsPtr = &(node->parent->right); }
 
   Node* child = node->left;
 
@@ -148,7 +149,7 @@ Node* BinarySearchTree::rightRotation(Node* node) {
   child->parent = node->parent;
   node->parent = child;
   *parentsPtr = child;
-  child->right->parent = node;
+  if (child->right) { child->right->parent = node; }
   child->right = node;
 
   return child;
@@ -166,19 +167,61 @@ Node* BinarySearchTree::leftRotation(Node* node) {
   child->parent = node->parent;
   node->parent = child;
   *parentsPtr = child;
-  child->left->parent = node;
+  if (child->left) { child->left->parent = node; }
   child->left = node;
 
   return child;
 }
 
 int BinarySearchTree::organizeTreeInsertion(Node* node) {
+  if (!node) { return 1; }
+
+  if (node == head) {
+    node->color = BLACK;
+    return 0;
+  }
+
+  if (node->parent->color == BLACK) {
+    return 0;
+  }
+
+  Node* parent = node->parent;
+  Node* unc = getSibling(parent);
+  Node* grandfather = parent->parent;
+
+  if (unc && unc->color == RED) {
+    parent->color = BLACK;
+    unc->color = BLACK; 
+    grandfather->color = RED;
+    if (grandfather == head) { grandfather->color = RED; }
+
+    organizeTreeInsertion(grandfather);
+  } else {
+    if (grandfather->left == node->parent) {
+      if (parent->right == node) {
+        swapColor(node);
+        swapColor(parent);
+        leftRotation(parent);
+      }
+      rightRotation(grandfather);
+    } else {
+      if (parent->left == node) {
+        swapColor(node);
+        swapColor(parent);
+        rightRotation(parent);
+      }
+      leftRotation(grandfather);
+    }
+
+    swapColor(parent);
+    swapColor(grandfather);
+  }
+
   return 0;
 }
 
 int BinarySearchTree::swapColor(Node* node) {
   if (!node) { return 1; }
-  if (!node->color) { return 1; }
 
   if (node->color == BLACK) { node->color = RED; }
   else { node->color = BLACK; }
