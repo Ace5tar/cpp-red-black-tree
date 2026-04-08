@@ -26,7 +26,7 @@ int BinarySearchTree::remove(int data) {
 
 int BinarySearchTree::insert(int data) {
   if (!head) { 
-    head = new Node(data); 
+    head = new Node(data, BLACK); 
     return 0;
   }
 
@@ -92,7 +92,7 @@ int BinarySearchTree::insertRecursive(int data, Node* node) {
 
   
   if (!*nextNode) {
-    *nextNode = new Node(data);
+    *nextNode = new Node(data, RED);
     (*nextNode)->parent = node;
   } else {
     insertRecursive(data, *nextNode);
@@ -132,15 +132,15 @@ Node* BinarySearchTree::getSibling(Node* node) {
   if (!node) { return nullptr; }
   if (!node->parent) { return nullptr; }
 
-  if (&(node->parent->left) == node ) { return node->parent->right; }
-  if (&(node->parent->right) == node ) { return node->parent->left; }
+  if (node->parent->left == node ) { return node->parent->right; }
+  else { return node->parent->left; }
 }
 
 Node* BinarySearchTree::rightRotation(Node* node) {
   Node** parentsPtr = nullptr;
   if (node == head) { parentsPtr = &head; }
   if (node->parent && node->parent->left == node) { parentsPtr = &(node->parent->left); }
-  if (node->parent && node->parent->right == node) { parentsPtr = &(node->parent->right); }
+  { parentsPtr = &(node->parent->right); }
 
   Node* child = node->left;
 
@@ -182,6 +182,8 @@ int BinarySearchTree::swapColor(Node* node) {
 
   if (node->color == BLACK) { node->color = RED; }
   else { node->color = BLACK; }
+
+  return 0;
 }
 
 std::ostream& operator<<(std::ostream& os, BinarySearchTree& tree) {
