@@ -286,9 +286,6 @@ int BinarySearchTree::doubleBlack(Node* node, Node* parent) {
   // sibling is red
   } else if (sibling && sibling->color == RED){
 
-    parent->color = RED;
-    sibling->color = BLACK;
-
     // sibling is left child of parent
     if (parent->left == sibling) {
       rightRotation(parent);
