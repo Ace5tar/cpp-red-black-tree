@@ -51,6 +51,12 @@ class BinarySearchTree {
     // Organizes the tree in the insertion case starting from the supplied node
     int organizeTreeInsertion(Node* node);
 
+    // Organizes the tree in the deletion case starting from the supplied node
+    int organizeTreeDeletion(Node* deletedNode, Node* replacingNode);
+
+    // Recurive algorithm for fixing a double black
+    int doubleBlack(Node* node, Node* parent);
+
     // Swap the color of the supplied node (RED->BLACK, BLACK->RED)
     int swapColor(Node* node);
 

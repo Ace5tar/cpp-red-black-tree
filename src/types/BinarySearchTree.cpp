@@ -48,6 +48,7 @@ int BinarySearchTree::removeNode(Node* node) {
 
   if (!node->left && !node->right) {
     *parentsPtr = nullptr;  
+    organizeTreeDeletion(node, nullptr);
     delete node;
     return 0;
   }
@@ -55,6 +56,7 @@ int BinarySearchTree::removeNode(Node* node) {
   if (!node->left) {
     *parentsPtr = node->right;
     node->right->parent = node->parent;
+    organizeTreeDeletion(node, node->right);
     delete node;
     return 0;
   }
@@ -62,6 +64,7 @@ int BinarySearchTree::removeNode(Node* node) {
   if (!node->right) {
     *parentsPtr = node->left;
     node->left->parent = node->parent;
+    organizeTreeDeletion(node, node->left);
     delete node;
     return 0;
   }
@@ -218,6 +221,101 @@ int BinarySearchTree::organizeTreeInsertion(Node* node) {
   }
 
   return 0;
+}
+
+int BinarySearchTree::organizeTreeDeletion(Node* deletedNode, Node* replacingNode) {
+
+  // Simple case
+  if (deletedNode->color == RED 
+      || (replacingNode && replacingNode->color == RED) ) {
+    if (replacingNode) { replacingNode->color = BLACK; }
+    return 0;
+  }
+
+  return doubleBlack(replacingNode, deletedNode->parent);
+
+}
+
+int BinarySearchTree::doubleBlack(Node* node, Node* parent) {
+
+  if (node == head) { 
+    node->color = BLACK;
+    return 0;
+  }
+
+  Node* sibling = nullptr;
+  if (parent->left == node) { sibling = parent->right; }
+  else if (parent->right == node) { sibling = parent->left; }
+
+  Node* redNeice = nullptr;
+  if (sibling && sibling->right && sibling->right->color == RED) { redNeice = sibling->right; }
+  if (sibling && sibling->left && sibling->left->color == RED) { redNeice = sibling->left; }
+
+  // sibling is black and has red child
+  if (sibling && sibling->color == BLACK && redNeice) {
+    if (parent->left == sibling) {
+      // Left Right case
+      if (sibling->right == redNeice && 
+          (!getSibling(redNeice) || getSibling(redNeice)->color == BLACK)) {
+        redNeice->color = parent->color;
+        leftRotation(sibling);
+      // Left Left case
+      } else {
+        redNeice->color = sibling->color;
+        sibling->color = parent->color;
+      }
+      rightRotation(parent);
+    } else {
+      // Right Left case
+      if (sibling->left == redNeice && 
+          (!getSibling(redNeice) || getSibling(redNeice)->color == BLACK)) {
+        redNeice->color = parent->color;
+        rightRotation(sibling);
+      // Right Right case
+      } else {
+        // Have to use sibling->right here in the case that sibling has two red children
+        sibling->right->color = sibling->color;
+        sibling->color = parent->color;
+      }
+      leftRotation(parent);
+    }
+
+    parent->color = BLACK;
+    return 0;
+
+  // sibling is red
+  } else if (sibling && sibling->color == RED){
+
+    parent->color = RED;
+    sibling->color = BLACK;
+
+    // sibling is left child of parent
+    if (parent->left == sibling) {
+      rightRotation(parent);
+    // sibling is right child of parent
+    } else {
+      leftRotation(parent);
+    }
+    swapColor(sibling);
+    swapColor(parent);
+
+    doubleBlack(node, parent);
+    return 0;
+
+  // sibling is black and has no red child
+  } else {
+    if (sibling) { sibling->color = RED; }
+
+    if (parent->color == BLACK) {
+      doubleBlack(parent, parent->parent);
+    } else {
+      parent->color = BLACK;
+    }
+
+    return 0;
+  }
+
+  return 1;
 }
 
 int BinarySearchTree::swapColor(Node* node) {
